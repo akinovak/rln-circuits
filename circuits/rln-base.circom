@@ -14,12 +14,14 @@ template CalculateIdentityCommitment() {
 template CalculateA1() {
     signal input a_0;
     signal input epoch;
+    signal input rln_identifier;
 
     signal output out;
 
-    component hasher = Poseidon(2);
+    component hasher = Poseidon(3);
     hasher.inputs[0] <== a_0;
     hasher.inputs[1] <== epoch;
+    hasher.inputs[2] <== rln_identifier;
 
     out <== hasher.out;
 }
@@ -27,10 +29,12 @@ template CalculateA1() {
 
 template CalculateNullifier() {
     signal input a_1;
+    signal input rln_identifier;
     signal output out;
 
-    component hasher = Poseidon(1);
+    component hasher = Poseidon(2);
     hasher.inputs[0] <== a_1;
+    hasher.inputs[1] <== rln_identifier;
 
     out <== hasher.out;
 }
@@ -51,20 +55,16 @@ template RLN(n_levels) {
     //public signals
     signal input x; // x is actually just the signal hash
     signal input epoch;
+    signal input rln_identifier;
 
     //outputs
     signal output y;
     signal output root;
     signal output nullifier;
 
-
-    //begin identity commitment
     component identity_commitment = CalculateIdentityCommitment();
     identity_commitment.identity_secret <== identity_secret;
-    //end identity commitment
 
-
-    //begin tree
     var i;
     var j;
     component inclusionProof = MerkleTreeInclusionProof(n_levels);
@@ -78,7 +78,6 @@ template RLN(n_levels) {
     }
 
     root <== inclusionProof.root;
-    //end tree
 
     // 2. Part
     // Line Equation Constaints
@@ -87,10 +86,15 @@ template RLN(n_levels) {
     component a_1 = CalculateA1();
     a_1.a_0 <== identity_secret;
     a_1.epoch <== epoch;
+    a_1.rln_identifier <== rln_identifier;
 
     y <== identity_secret + a_1.out * x;
     component calculateNullifier = CalculateNullifier();
     calculateNullifier.a_1 <== a_1.out;
+    calculateNullifier.rln_identifier <== rln_identifier;
 
     nullifier <== calculateNullifier.out;
+
+    signal rln_identifier_squared;
+    rln_identifier_squared <== rln_identifier * rln_identifier;
 }
