@@ -57,7 +57,7 @@ template CalculateOutput(limit) {
   coeffs[0].b <== epoch;
 
   values[0] <== coeffs[0].out * degrees[0] + a0;
-  nullifierHash.inputs[0] <== coeffs[0];
+  nullifierHash.inputs[0] <== coeffs[0].out;
 
   var i;
   for(i = 1; i < limit; i++) {
@@ -69,7 +69,7 @@ template CalculateOutput(limit) {
     coeffs[i].b <== epoch;
 
     values[i] <== coeffs[i].out * degrees[i] + values[i - 1];
-    nullifierHash.inputs[0] <== coeffs[i];
+    nullifierHash.inputs[0] <== coeffs[i].out;
   }
 
   out <== values[limit-1];
