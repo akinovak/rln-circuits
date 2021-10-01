@@ -20,10 +20,11 @@ npx snarkjs zkey contribute rln_0000.zkey rln_final.zkey
 
 npx snarkjs zkey export verificationkey rln_final.zkey verification_key.json
 
-# snarkjs zkey export solidityverifier rln_final.zkey verifier.sol
+snarkjs zkey export solidityverifier rln_final.zkey verifier.sol
 
 # mv verifier.sol ../../contracts/contracts/Verifier.sol
 
 cp verification_key.json ../zkeyFiles/verification_key.json
 cp rln.wasm ../zkeyFiles/rln.wasm
 cp rln_final.zkey ../zkeyFiles/rln_final.zkey
+cp verifier.sol ../zkeyFiles/verifier.sol
